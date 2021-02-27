@@ -1,6 +1,7 @@
 const express = require("express");
 const mongojs = require("mongojs");
 const Workout = require("./models/workoutdb.js");
+const path = require("path")
 
 const app = express();
 
@@ -8,13 +9,14 @@ const databaseUrl = "workout";
 const collections = ["workout"];
 
 const db = mongojs(databaseUrl, collections);
+app.use(express.static("public"));
 
 db.on("error", error => {
   console.log("Database Error:", error);
 });
 
 app.get("/", (req, res) => {
-  res.send("Hello world");
+  res.send("index.html");
 });
 
 app.get("/all", (req, res) => {
@@ -27,6 +29,22 @@ app.get("/all", (req, res) => {
   });
 });
 
+app.get("/api/workouts/:id", (req, res) => {
+  console.log(req.params.id)
+  db.workouts.find({"_id": req.params.id}, (err, data) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log(data)
+      res.json(data);
+    }
+  })
+})
+
+app.get("/exercise", (req, res) => {
+  res.sendFile(path.join(__dirname + "/public/exercise.html"))
+})
+
 app.post("/api/workouts", ({ body }, res) => {
   Workout.create(body)
     .then(dbWorkout => {
@@ -37,7 +55,6 @@ app.post("/api/workouts", ({ body }, res) => {
     });
 });
 
-app.get("/api/workouts/")
 // 1: Name: Send JSON response sorted by name in ascending order, e.g. GET "/name"
 app.get("/name", (req, res) => {
   db.workouts.find({}, (err, data) => {
