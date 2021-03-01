@@ -1,7 +1,9 @@
+//REQUIRING MONGOOS
 const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
+//CREATING THE WORKOUT SCHEMA
 const workoutSchema = new Schema({
   name: {
     type: String,
@@ -35,6 +37,7 @@ const workoutSchema = new Schema({
   }
 });
 
+//CREATING THE WORKOUT VARIABLE AND EXPORTING IT
 const Workout = mongoose.model("workout", workoutSchema);
 
 module.exports = Workout;

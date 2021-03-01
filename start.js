@@ -1,3 +1,4 @@
+//REQUIRING THE MODULES
 const express = require("express");
 const mongojs = require("mongojs");
 const Workout = require("./models/workoutdb.js");
@@ -8,6 +9,7 @@ const app = express();
 const databaseUrl = "workout";
 const collections = ["workout"];
 
+//BRINGING IN MONGO.JS
 const db = mongojs(databaseUrl, collections);
 app.use(express.static("public"));
 
@@ -15,6 +17,7 @@ db.on("error", error => {
   console.log("Database Error:", error);
 });
 
+//CONNECTING TO THE HTML PAGES
 app.get("/", (req, res) => {
   res.send("index.html");
 });
@@ -24,9 +27,11 @@ app.get("/exercise", (req, res) => {
 })
 
 app.get("/stats", (req, res) => {
-  res.sendFile(path.join(__dirname + "/pubic/stats.html"))
+  res.sendFile(path.join(__dirname + "/public/stats.html"))
 })
-app.get("/api/stats", (req, res) => {
+
+//USING A GET REQUEST TO FIND THE WORKOUTS
+app.post("/stats", (req, res) => {
   db.workouts.find({}, (err, data) => {
     if (err) {
       console.log(err);
@@ -36,6 +41,7 @@ app.get("/api/stats", (req, res) => {
   });
 });
 
+//USING A GET REWUEST TO FIN A CERTAIN WORKOUT FROM THE ID
 app.get("/api/workouts/:id", (req, res) => {
   console.log(req.params.id)
   db.workouts.find({"_id": req.params.id}, (err, data) => {
@@ -48,6 +54,7 @@ app.get("/api/workouts/:id", (req, res) => {
   })
 })
 
+//USING A GET REQUEST TO GET ALL OF THE WORKOUTS 
 app.get("/api/workouts", (req, res) => {
   db.workouts.find({}, (err, data) => {
     console.log(data)
@@ -55,35 +62,25 @@ app.get("/api/workouts", (req, res) => {
   })
 })
 
-app.post("/exercise", ({body}, res) => {
-  Workout.create(body)
-    .then(dbWorkout => {
-      res.json(dbWorkout)
-    })
-    .catch(err => {
-      res.status(400).json(err);
-    });
-})
-
-app.post("/api/workouts", ({ body }, res) => {
-  Workout.create(body)
-    .then(dbWorkout => {
-      res.json(dbWorkout);
-    })
-    .catch(err => {
-      res.status(400).json(err);
-    });
-});
-
-
-app.get("/name", (req, res) => {
+//USING A POST REQUEST TO POST A NEW WORKOUT TO THE EXERCISE PAGE
+app.post("/exercise", (req, res) => {
   db.workouts.find({}, (err, data) => {
     console.log(data)
+    res.json(data)
   })
 })
 
-app.get("/weight", (req, res) => {
-  db.workouts.find({}, )
+//USING A PUT REQUEST TO UPDATE THE EXERCISE IN THE WORKOUT
+app.put("/api/workouts/:id/", async (req, res) => {
+  db.workouts.find({"_id": req.params.id}, (err, data) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log(data)
+      db.workouts.update({"_id": req.params.id}, {$push: {"exercises": { $each: [req.body]}}})
+    }
+    res.json(data)
+  })
 })
 
 app.listen(3000, () => {
