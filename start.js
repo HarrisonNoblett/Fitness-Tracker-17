@@ -19,7 +19,14 @@ app.get("/", (req, res) => {
   res.send("index.html");
 });
 
-app.get("/all", (req, res) => {
+app.get("/exercise", (req, res) => {
+  res.sendFile(path.join(__dirname + "/public/exercise.html"))
+})
+
+app.get("/stats", (req, res) => {
+  res.sendFile(path.join(__dirname + "/pubic/stats.html"))
+})
+app.get("/api/stats", (req, res) => {
   db.workouts.find({}, (err, data) => {
     if (err) {
       console.log(err);
@@ -41,8 +48,21 @@ app.get("/api/workouts/:id", (req, res) => {
   })
 })
 
-app.get("/exercise", (req, res) => {
-  res.sendFile(path.join(__dirname + "/public/exercise.html"))
+app.get("/api/workouts", (req, res) => {
+  db.workouts.find({}, (err, data) => {
+    console.log(data)
+    res.json(data)
+  })
+})
+
+app.post("/exercise", ({body}, res) => {
+  Workout.create(body)
+    .then(dbWorkout => {
+      res.json(dbWorkout)
+    })
+    .catch(err => {
+      res.status(400).json(err);
+    });
 })
 
 app.post("/api/workouts", ({ body }, res) => {
@@ -55,17 +75,17 @@ app.post("/api/workouts", ({ body }, res) => {
     });
 });
 
-// 1: Name: Send JSON response sorted by name in ascending order, e.g. GET "/name"
+
 app.get("/name", (req, res) => {
   db.workouts.find({}, (err, data) => {
     console.log(data)
   })
 })
-// 2: Weight: Send JSON response sorted by weight in descending order, , e.g. GET "/weight"
+
 app.get("/weight", (req, res) => {
   db.workouts.find({}, )
 })
-// Set the app to listen on port 3000
+
 app.listen(3000, () => {
   console.log("App running on port 3000!");
 });
