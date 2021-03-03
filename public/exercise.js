@@ -19,7 +19,7 @@ let shouldNavigateAway = false;
 
 async function initExercise() {
   let workout;
-
+  console.log("initExercise")
   if (location.search.split("=")[1] === undefined) {
     workout = await API.createWorkout()
     console.log(workout)
@@ -94,7 +94,10 @@ function validateInputs() {
     addButton.setAttribute("disabled", true);
   }
 }
-
+async function handleFormSubmit2(event) {
+  event.preventDefault();
+  console.log("hello")
+}
 async function handleFormSubmit(event) {
   event.preventDefault();
 
@@ -113,8 +116,9 @@ async function handleFormSubmit(event) {
     workoutData.reps = Number(repsInput.value.trim());
     workoutData.duration = Number(resistanceDurationInput.value.trim());
   }
-console.log("handleFormSubmit")
-  await API.addExercise(workoutData);
+console.log("workoutData", workoutData)
+console.log("hello")
+  //await API.addExercise(workoutData);
   clearInputs();
   toast.classList.add("success");
 }
@@ -147,7 +151,7 @@ if (completeButton) {
   });
 }
 if (addButton) {
-  addButton.addEventListener("click", handleFormSubmit);
+  addButton.addEventListener("click", handleFormSubmit2);
 }
 toast.addEventListener("animationend", handleToastAnimationEnd);
 
