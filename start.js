@@ -3,7 +3,7 @@ const express = require("express");
 const mongojs = require("mongojs");
 const Workout = require("./models/workoutdb.js");
 const path = require("path")
-
+var PORT = process.env.PORT || 3000;
 const app = express();
 
 const databaseUrl = "workout";
@@ -93,6 +93,6 @@ app.put("/api/workouts/:id/", async (req, res) => {
   })
 })
 
-app.listen(3000, () => {
+app.listen(PORT, () => {
   console.log("App running on port 3000!");
 });
