@@ -37,7 +37,9 @@ app.post("/stats", (req, res) => {
       console.log(err);
     } else {
       res.json(data);
+      db.workouts.update({"_id": req.params.id}, {$push: {"workouts": { $each: [req.body]}}})
     }
+    res.json(data)
   });
 });
 
@@ -52,6 +54,14 @@ app.get("/api/workouts/:id", (req, res) => {
       res.json(data);
     }
   })
+})
+
+app.post("/api/workouts", (req, res) =>{
+  Workout.create({})
+  .then((dbWorkout) => {
+    res.json(dbWorkout)
+  }) .catch(err => {
+    res.json(err)})
 })
 
 //USING A GET REQUEST TO GET ALL OF THE WORKOUTS 
